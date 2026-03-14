@@ -1,0 +1,13 @@
+packages:
+  "framer-motion": "For smooth entry animations of real-time messages and panel transitions"
+  "date-fns": "For formatting timestamps on messages beautifully"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility for merging tailwind classes without conflicts"
+  "react-hook-form": "For robust connection form state management"
+  "@hookform/resolvers": "For validating form inputs with Zod"
+  "zod": "For connection form validation schema"
+
+notes:
+  - "The API provides generated hooks in @workspace/api-client-react"
+  - "Using EventSource for real-time SSE stream at /api/mqtt/messages/stream"
+  - "Defaulting to a dark, technical dashboard aesthetic"

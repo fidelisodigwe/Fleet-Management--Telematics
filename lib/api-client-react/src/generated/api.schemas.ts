@@ -8,3 +8,31 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface MqttConnectRequest {
+  /** MQTT broker URL (e.g., mqtt://broker.example.com:1883) */
+  brokerUrl: string;
+  username?: string;
+  password?: string;
+  clientId?: string;
+}
+
+export interface MqttSubscribeRequest {
+  topic: string;
+}
+
+export interface MqttConnectResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface MqttStatusResponse {
+  connected: boolean;
+  brokerUrl?: string;
+  clientId?: string;
+  subscribedTopics: string[];
+}
+
+export interface ErrorResponse {
+  error: string;
+}

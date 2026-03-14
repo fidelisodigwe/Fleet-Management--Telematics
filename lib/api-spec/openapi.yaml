@@ -1,6 +1,5 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
   description: API specification
@@ -10,6 +9,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: mqtt
+    description: MQTT operations
 paths:
   /healthz:
     get:
@@ -24,6 +25,90 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /mqtt/connect:
+    post:
+      operationId: mqttConnect
+      tags: [mqtt]
+      summary: Connect to MQTT broker
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MqttConnectRequest"
+      responses:
+        "200":
+          description: Connected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MqttConnectResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /mqtt/disconnect:
+    post:
+      operationId: mqttDisconnect
+      tags: [mqtt]
+      summary: Disconnect from MQTT broker
+      responses:
+        "200":
+          description: Disconnected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MqttConnectResponse"
+  /mqtt/subscribe:
+    post:
+      operationId: mqttSubscribe
+      tags: [mqtt]
+      summary: Subscribe to a topic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MqttSubscribeRequest"
+      responses:
+        "200":
+          description: Subscribed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MqttConnectResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /mqtt/status:
+    get:
+      operationId: mqttStatus
+      tags: [mqtt]
+      summary: Get MQTT connection status
+      responses:
+        "200":
+          description: Status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MqttStatusResponse"
+  /mqtt/messages/stream:
+    get:
+      operationId: mqttMessagesStream
+      tags: [mqtt]
+      summary: Stream MQTT messages via SSE
+      responses:
+        "200":
+          description: SSE stream of MQTT messages
+          content:
+            text/event-stream:
+              schema:
+                type: string
 components:
   schemas:
     HealthStatus:
@@ -33,4 +118,57 @@ components:
           type: string
       required:
         - status
-
+    MqttConnectRequest:
+      type: object
+      properties:
+        brokerUrl:
+          type: string
+          description: MQTT broker URL (e.g., mqtt://broker.example.com:1883)
+        username:
+          type: string
+        password:
+          type: string
+        clientId:
+          type: string
+      required:
+        - brokerUrl
+    MqttSubscribeRequest:
+      type: object
+      properties:
+        topic:
+          type: string
+      required:
+        - topic
+    MqttConnectResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+        - message
+    MqttStatusResponse:
+      type: object
+      properties:
+        connected:
+          type: boolean
+        brokerUrl:
+          type: string
+        clientId:
+          type: string
+        subscribedTopics:
+          type: array
+          items:
+            type: string
+      required:
+        - connected
+        - subscribedTopics
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error

@@ -14,3 +14,50 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * @summary Connect to MQTT broker
+ */
+export const MqttConnectBody = zod.object({
+  brokerUrl: zod
+    .string()
+    .describe("MQTT broker URL (e.g., mqtt:\/\/broker.example.com:1883)"),
+  username: zod.string().optional(),
+  password: zod.string().optional(),
+  clientId: zod.string().optional(),
+});
+
+export const MqttConnectResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string(),
+});
+
+/**
+ * @summary Disconnect from MQTT broker
+ */
+export const MqttDisconnectResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string(),
+});
+
+/**
+ * @summary Subscribe to a topic
+ */
+export const MqttSubscribeBody = zod.object({
+  topic: zod.string(),
+});
+
+export const MqttSubscribeResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string(),
+});
+
+/**
+ * @summary Get MQTT connection status
+ */
+export const MqttStatusResponse = zod.object({
+  connected: zod.boolean(),
+  brokerUrl: zod.string().optional(),
+  clientId: zod.string().optional(),
+  subscribedTopics: zod.array(zod.string()),
+});

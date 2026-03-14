@@ -6,4 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./errorResponse";
 export * from "./healthStatus";
+export * from "./mqttConnectRequest";
+export * from "./mqttConnectResponse";
+export * from "./mqttStatusResponse";
+export * from "./mqttSubscribeRequest";

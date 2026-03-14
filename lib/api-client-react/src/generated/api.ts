@@ -5,18 +5,28 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
+  MutationFunction,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import type { HealthStatus } from "./api.schemas";
+import type {
+  ErrorResponse,
+  HealthStatus,
+  MqttConnectRequest,
+  MqttConnectResponse,
+  MqttStatusResponse,
+  MqttSubscribeRequest,
+} from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
-import type { ErrorType } from "../custom-fetch";
+import type { ErrorType, BodyType } from "../custom-fetch";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -92,6 +102,409 @@ export function useHealthCheck<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getHealthCheckQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Connect to MQTT broker
+ */
+export const getMqttConnectUrl = () => {
+  return `/api/mqtt/connect`;
+};
+
+export const mqttConnect = async (
+  mqttConnectRequest: MqttConnectRequest,
+  options?: RequestInit,
+): Promise<MqttConnectResponse> => {
+  return customFetch<MqttConnectResponse>(getMqttConnectUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(mqttConnectRequest),
+  });
+};
+
+export const getMqttConnectMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mqttConnect>>,
+    TError,
+    { data: BodyType<MqttConnectRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mqttConnect>>,
+  TError,
+  { data: BodyType<MqttConnectRequest> },
+  TContext
+> => {
+  const mutationKey = ["mqttConnect"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mqttConnect>>,
+    { data: BodyType<MqttConnectRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return mqttConnect(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MqttConnectMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mqttConnect>>
+>;
+export type MqttConnectMutationBody = BodyType<MqttConnectRequest>;
+export type MqttConnectMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Connect to MQTT broker
+ */
+export const useMqttConnect = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mqttConnect>>,
+    TError,
+    { data: BodyType<MqttConnectRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof mqttConnect>>,
+  TError,
+  { data: BodyType<MqttConnectRequest> },
+  TContext
+> => {
+  return useMutation(getMqttConnectMutationOptions(options));
+};
+
+/**
+ * @summary Disconnect from MQTT broker
+ */
+export const getMqttDisconnectUrl = () => {
+  return `/api/mqtt/disconnect`;
+};
+
+export const mqttDisconnect = async (
+  options?: RequestInit,
+): Promise<MqttConnectResponse> => {
+  return customFetch<MqttConnectResponse>(getMqttDisconnectUrl(), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getMqttDisconnectMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mqttDisconnect>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mqttDisconnect>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["mqttDisconnect"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mqttDisconnect>>,
+    void
+  > = () => {
+    return mqttDisconnect(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MqttDisconnectMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mqttDisconnect>>
+>;
+
+export type MqttDisconnectMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Disconnect from MQTT broker
+ */
+export const useMqttDisconnect = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mqttDisconnect>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof mqttDisconnect>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getMqttDisconnectMutationOptions(options));
+};
+
+/**
+ * @summary Subscribe to a topic
+ */
+export const getMqttSubscribeUrl = () => {
+  return `/api/mqtt/subscribe`;
+};
+
+export const mqttSubscribe = async (
+  mqttSubscribeRequest: MqttSubscribeRequest,
+  options?: RequestInit,
+): Promise<MqttConnectResponse> => {
+  return customFetch<MqttConnectResponse>(getMqttSubscribeUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(mqttSubscribeRequest),
+  });
+};
+
+export const getMqttSubscribeMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mqttSubscribe>>,
+    TError,
+    { data: BodyType<MqttSubscribeRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mqttSubscribe>>,
+  TError,
+  { data: BodyType<MqttSubscribeRequest> },
+  TContext
+> => {
+  const mutationKey = ["mqttSubscribe"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mqttSubscribe>>,
+    { data: BodyType<MqttSubscribeRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return mqttSubscribe(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MqttSubscribeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mqttSubscribe>>
+>;
+export type MqttSubscribeMutationBody = BodyType<MqttSubscribeRequest>;
+export type MqttSubscribeMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Subscribe to a topic
+ */
+export const useMqttSubscribe = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mqttSubscribe>>,
+    TError,
+    { data: BodyType<MqttSubscribeRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof mqttSubscribe>>,
+  TError,
+  { data: BodyType<MqttSubscribeRequest> },
+  TContext
+> => {
+  return useMutation(getMqttSubscribeMutationOptions(options));
+};
+
+/**
+ * @summary Get MQTT connection status
+ */
+export const getMqttStatusUrl = () => {
+  return `/api/mqtt/status`;
+};
+
+export const mqttStatus = async (
+  options?: RequestInit,
+): Promise<MqttStatusResponse> => {
+  return customFetch<MqttStatusResponse>(getMqttStatusUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getMqttStatusQueryKey = () => {
+  return [`/api/mqtt/status`] as const;
+};
+
+export const getMqttStatusQueryOptions = <
+  TData = Awaited<ReturnType<typeof mqttStatus>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof mqttStatus>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getMqttStatusQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof mqttStatus>>> = ({
+    signal,
+  }) => mqttStatus({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof mqttStatus>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type MqttStatusQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mqttStatus>>
+>;
+export type MqttStatusQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get MQTT connection status
+ */
+
+export function useMqttStatus<
+  TData = Awaited<ReturnType<typeof mqttStatus>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof mqttStatus>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getMqttStatusQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Stream MQTT messages via SSE
+ */
+export const getMqttMessagesStreamUrl = () => {
+  return `/api/mqtt/messages/stream`;
+};
+
+export const mqttMessagesStream = async (
+  options?: RequestInit,
+): Promise<string> => {
+  return customFetch<string>(getMqttMessagesStreamUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getMqttMessagesStreamQueryKey = () => {
+  return [`/api/mqtt/messages/stream`] as const;
+};
+
+export const getMqttMessagesStreamQueryOptions = <
+  TData = Awaited<ReturnType<typeof mqttMessagesStream>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof mqttMessagesStream>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getMqttMessagesStreamQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof mqttMessagesStream>>
+  > = ({ signal }) => mqttMessagesStream({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof mqttMessagesStream>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type MqttMessagesStreamQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mqttMessagesStream>>
+>;
+export type MqttMessagesStreamQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Stream MQTT messages via SSE
+ */
+
+export function useMqttMessagesStream<
+  TData = Awaited<ReturnType<typeof mqttMessagesStream>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof mqttMessagesStream>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getMqttMessagesStreamQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

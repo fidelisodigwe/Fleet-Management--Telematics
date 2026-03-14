@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "MQTT Dashboard"
+version = "1.0.0"
+id = "artifacts/mqtt-dashboard"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+localPort = 21928
+name = "web"
+paths = ["/"]
+
+[services.development]
+run = "pnpm --filter @workspace/mqtt-dashboard run dev"
+
+[services.env]
+PORT = "21928"
+BASE_PATH = "/"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/mqtt-dashboard", "run", "build"]
+publicDir = "artifacts/mqtt-dashboard/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
