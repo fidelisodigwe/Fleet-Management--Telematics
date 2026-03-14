@@ -22,7 +22,7 @@ type ConnectFormValues = z.infer<typeof connectSchema>;
 export function ConnectionPanel() {
   const { status, connect, disconnect, subscribe } = useMqtt();
   const { toast } = useToast();
-  const [topicInput, setTopicInput] = useState("");
+  const [topicInput, setTopicInput] = useState("/topic/transittag/#");
 
   const isConnected = status.data?.connected ?? false;
 
