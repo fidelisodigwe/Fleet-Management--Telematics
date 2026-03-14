@@ -30,7 +30,7 @@ export function ConnectionPanel() {
     resolver: zodResolver(connectSchema),
     defaultValues: {
       brokerUrl: "mqtt://byte-iot.net",
-      username: "",
+      username: "wayne123",
       password: "",
       clientId: `web_client_${Math.random().toString(16).slice(2, 8)}`,
     },
