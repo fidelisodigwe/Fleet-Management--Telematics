@@ -29,7 +29,7 @@ export function ConnectionPanel() {
   const form = useForm<ConnectFormValues>({
     resolver: zodResolver(connectSchema),
     defaultValues: {
-      brokerUrl: "mqtt://test.mosquitto.org:1883",
+      brokerUrl: "mqtt://byte-iot.net",
       username: "",
       password: "",
       clientId: `web_client_${Math.random().toString(16).slice(2, 8)}`,
