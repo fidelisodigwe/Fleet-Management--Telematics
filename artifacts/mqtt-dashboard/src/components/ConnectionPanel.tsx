@@ -31,7 +31,7 @@ export function ConnectionPanel() {
     defaultValues: {
       brokerUrl: "mqtt://byte-iot.net",
       username: "wayne123",
-      password: "",
+      password: "dispenser123",
       clientId: `web_client_${Math.random().toString(16).slice(2, 8)}`,
     },
   });
