@@ -1,7 +1,12 @@
 import { ConnectionPanel } from "@/components/ConnectionPanel";
 import { MessageFeed } from "@/components/MessageFeed";
+import { Link, useLocation } from "wouter";
+import { Activity, Gauge } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
+  const [location] = useLocation();
+
   return (
     <div className="min-h-screen w-full flex flex-col p-4 md:p-6 lg:p-8">
       {/* Header */}
@@ -11,6 +16,21 @@ export default function Dashboard() {
           <p className="text-muted-foreground mt-1 font-mono text-sm">
             Real-time telemetry & protocol monitoring
           </p>
+        </div>
+        
+        <div className="flex gap-2 bg-secondary/50 p-1 rounded-lg border border-border/50">
+          <Link href="/">
+            <Button variant={location === "/" ? "secondary" : "ghost"} size="sm" className="w-32">
+              <Activity className="w-4 h-4 mr-2" />
+              Live Feed
+            </Button>
+          </Link>
+          <Link href="/telematics">
+            <Button variant={location === "/telematics" ? "secondary" : "ghost"} size="sm" className="w-32">
+              <Gauge className="w-4 h-4 mr-2" />
+              Telematics
+            </Button>
+          </Link>
         </div>
       </header>
 
