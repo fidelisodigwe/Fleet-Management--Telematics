@@ -18,8 +18,8 @@ const queryClient = new QueryClient({
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Dashboard} />
-      <Route path="/telematics" component={TelematicsDashboard} />
+      <Route path="/" component={TelematicsDashboard} />
+      <Route path="/live-feed" component={Dashboard} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -81,14 +81,14 @@ export default function TelematicsDashboard() {
         </div>
         
         <div className="flex gap-2 bg-secondary/50 p-1 rounded-lg border border-border/50">
-          <Link href="/">
-            <Button variant={location === "/" ? "secondary" : "ghost"} size="sm" className="w-32">
+          <Link href="/live-feed">
+            <Button variant={location === "/live-feed" ? "secondary" : "ghost"} size="sm" className="w-32">
               <Activity className="w-4 h-4 mr-2" />
               Live Feed
             </Button>
           </Link>
-          <Link href="/telematics">
-            <Button variant={location === "/telematics" ? "secondary" : "ghost"} size="sm" className="w-32">
+          <Link href="/">
+            <Button variant={location === "/" ? "secondary" : "ghost"} size="sm" className="w-32">
               <Gauge className="w-4 h-4 mr-2" />
               Telematics
             </Button>
