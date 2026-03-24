@@ -3,7 +3,7 @@ import { formatDistanceToNow } from "date-fns";
 import { 
   Battery, BatteryFull, BatteryLow, MapPin, Wifi, WifiOff, 
   Thermometer, Droplets, Gauge, Mountain, Activity, 
-  Radio, Clock, Signal, Copy, Check, ExternalLink, Hash
+  Radio, Clock, Signal, Copy, Check, ExternalLink, Hash, Truck
 } from "lucide-react";
 import { 
   LineChart, Line, AreaChart, Area, ResponsiveContainer 
@@ -80,17 +80,23 @@ export default function TelematicsDashboard() {
           </p>
         </div>
         
-        <div className="flex gap-2 bg-secondary/50 p-1 rounded-lg border border-border/50">
+        <div className="flex gap-2 bg-secondary/50 p-1 rounded-lg border border-border/50 overflow-x-auto">
           <Link href="/live-feed">
-            <Button variant={location === "/live-feed" ? "secondary" : "ghost"} size="sm" className="w-32">
+            <Button variant={location === "/live-feed" ? "secondary" : "ghost"} size="sm" className="w-32 shrink-0">
               <Activity className="w-4 h-4 mr-2" />
               Live Feed
             </Button>
           </Link>
           <Link href="/">
-            <Button variant={location === "/" ? "secondary" : "ghost"} size="sm" className="w-32">
+            <Button variant={location === "/" ? "secondary" : "ghost"} size="sm" className="w-32 shrink-0">
               <Gauge className="w-4 h-4 mr-2" />
               Telematics
+            </Button>
+          </Link>
+          <Link href="/fleet">
+            <Button variant={location === "/fleet" ? "secondary" : "ghost"} size="sm" className="w-32 shrink-0">
+              <Truck className="w-4 h-4 mr-2" />
+              Fleet
             </Button>
           </Link>
         </div>

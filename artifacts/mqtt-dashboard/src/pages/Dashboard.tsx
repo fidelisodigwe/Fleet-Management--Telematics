@@ -1,7 +1,7 @@
 import { ConnectionPanel } from "@/components/ConnectionPanel";
 import { MessageFeed } from "@/components/MessageFeed";
 import { Link, useLocation } from "wouter";
-import { Activity, Gauge } from "lucide-react";
+import { Activity, Gauge, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
@@ -29,6 +29,12 @@ export default function Dashboard() {
             <Button variant={location === "/" ? "secondary" : "ghost"} size="sm" className="w-32">
               <Gauge className="w-4 h-4 mr-2" />
               Telematics
+            </Button>
+          </Link>
+          <Link href="/fleet">
+            <Button variant={location === "/fleet" ? "secondary" : "ghost"} size="sm" className="w-32">
+              <Truck className="w-4 h-4 mr-2" />
+              Fleet
             </Button>
           </Link>
         </div>

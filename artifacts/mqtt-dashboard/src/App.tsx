@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Dashboard from "@/pages/Dashboard";
 import TelematicsDashboard from "@/pages/TelematicsDashboard";
+import FleetDashboard from "@/pages/FleetDashboard";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -20,6 +21,7 @@ function Router() {
     <Switch>
       <Route path="/" component={TelematicsDashboard} />
       <Route path="/live-feed" component={Dashboard} />
+      <Route path="/fleet" component={FleetDashboard} />
       <Route component={NotFound} />
     </Switch>
   );
